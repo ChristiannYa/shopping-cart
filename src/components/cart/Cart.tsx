@@ -48,7 +48,7 @@ const Cart = () => {
           </div>
         )}
       </div>
-      <div className="flex w-full">
+      <div className="w-full flex gap-x-2">
         <button
           onClick={handleCartTabStatus}
           className="bg-neutral-900 hover:bg-black hover:cursor-pointer w-full py-2"

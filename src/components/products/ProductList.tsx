@@ -1,7 +1,14 @@
-import { products } from "@/constants/products";
+"use client";
+
+import { useProducts } from "@/lib/hooks";
 import ProductItem from "./ProductItem";
 
 const ProductList = () => {
+  const { products, loading, error } = useProducts();
+
+  if (loading) return <div>Loading products...</div>;
+  if (error) return <div>Error loading products: {error}</div>;
+
   return (
     <div className="flex flex-wrap justify-center items-center gap-2">
       {products.map((product) => (
