@@ -2,7 +2,7 @@ import type { RootState } from "../../store";
 import { createSelector, createSlice, PayloadAction } from "@reduxjs/toolkit";
 
 interface CartItem {
-  id: number;
+  product_id: number;
   quantity: number;
   name: string;
   price: number;
@@ -14,7 +14,7 @@ const initialState = {
 };
 
 const findCartItem = (items: CartItem[], id: number) =>
-  items.find((item) => item.id === id);
+  items.find((item) => item.product_id === id);
 
 export const cartSlice = createSlice({
   name: "cart",
@@ -26,7 +26,7 @@ export const cartSlice = createSlice({
       // in the cart, not the from product list itself
       action: PayloadAction<Omit<CartItem, "quantity">>
     ) => {
-      const existingItem = findCartItem(state.items, action.payload.id);
+      const existingItem = findCartItem(state.items, action.payload.product_id);
 
       if (!existingItem) {
         state.items.push({
@@ -45,7 +45,7 @@ export const cartSlice = createSlice({
     },
     removeItemFromCart: (state, action: PayloadAction<number>) => {
       const id = action.payload;
-      state.items = state.items.filter((item) => item.id !== id);
+      state.items = state.items.filter((item) => item.product_id !== id);
     },
     decrementQuantity: (state, action: PayloadAction<number>) => {
       const id = action.payload;
@@ -55,7 +55,7 @@ export const cartSlice = createSlice({
         if (existingItem.quantity > 1) {
           existingItem.quantity -= 1;
         } else {
-          state.items = state.items.filter((item) => item.id !== id);
+          state.items = state.items.filter((item) => item.product_id !== id);
         }
       }
     },
@@ -93,7 +93,12 @@ export const selectCartTabStatus = (state: RootState) =>
   state.cart.cartTabStatus;
 
 export const selectIsItemInCart = (state: RootState, productId: number) =>
-  state.cart.items.some((item: CartItem) => item.id === productId);
+  state.cart.items.some((item: CartItem) => item.product_id === productId);
+
+export const selectItemTotal = (state: RootState, productId: number) => {
+  const item = findCartItem(state.cart.items, productId);
+  return item ? item.price * item.quantity : 0;
+};
 
 export const selectCartTotal = createSelector([selectCartItems], (items) =>
   items.reduce(

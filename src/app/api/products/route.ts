@@ -3,9 +3,7 @@ import pool from "@/lib/db";
 
 export const GET = async () => {
   try {
-    const result = await pool.query(
-      "SELECT product_id as id, name, price, in_stock, quantity FROM products"
-    );
+    const result = await pool.query("SELECT * FROM products");
 
     // Convert price to number for each product
     const products = result.rows.map((product) => ({

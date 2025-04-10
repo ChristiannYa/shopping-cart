@@ -25,13 +25,13 @@ const Cart = () => {
         <h2 className="text-2xl text-center">Your Cart</h2>
       </div>
 
-      <div className="">
+      <div>
         {cartItems.length === 0 ? (
           <p className="text-center">Your Cart is empty</p>
         ) : (
           <div>
             {cartItems.map((item) => (
-              <CartItem key={item.id} item={item} />
+              <CartItem key={item.product_id} item={item} />
             ))}
             <hr className="my-2 text-white/20" />
             <div className="px-3">

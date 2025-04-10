@@ -15,7 +15,7 @@ const ProductItem = ({ product }: ProductItemProps) => {
   const dispatch = useAppDispatch();
 
   const isItemInCart = useAppSelector((state) =>
-    selectIsItemInCart(state, product.id)
+    selectIsItemInCart(state, product.product_id)
   );
 
   const handleAddToCart = () => {

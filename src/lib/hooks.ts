@@ -37,6 +37,7 @@ export const useProducts = () => {
         setProducts(data);
       } catch (err) {
         setError(
+          // If err is an instance of Error, use its message, otherwise use a generic error message
           err instanceof Error ? err.message : "An unknown error occurred"
         );
       } finally {
