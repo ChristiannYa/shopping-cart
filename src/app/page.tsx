@@ -2,7 +2,10 @@
 
 import { useAppSelector } from "@/lib/hooks";
 
-import { selectCartTabStatus } from "@/lib/features/cart/cartSlice";
+import {
+  selectCartTabStatus,
+  selectReceiptVisibility,
+} from "@/lib/features/cart/cartSlice";
 import HomeHeader from "@/components/layout/HomeHeader";
 import ProductList from "@/components/products/ProductList";
 import Cart from "@/components/cart/Cart";
@@ -10,6 +13,7 @@ import Receipt from "@/components/cart/Receipt";
 
 export default function Home() {
   const statusTab = useAppSelector(selectCartTabStatus);
+  const receiptVisibility = useAppSelector(selectReceiptVisibility);
 
   return (
     <>
@@ -18,7 +22,7 @@ export default function Home() {
           statusTab
             ? "-translate-x-64 blur-xs pointer-events-none"
             : "blur-none"
-        }`}
+        } ${receiptVisibility ? "blur-sm pointer-events-none" : "blur-none"}`}
       >
         <HomeHeader />
         <hr className="text-white/20 mb-8" />

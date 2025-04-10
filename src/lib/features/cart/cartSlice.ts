@@ -11,6 +11,7 @@ interface CartItem {
 const initialState = {
   items: [] as CartItem[],
   cartTabStatus: false,
+  receiptVisibility: false,
 };
 
 const findCartItem = (items: CartItem[], id: number) =>
@@ -69,6 +70,14 @@ export const cartSlice = createSlice({
         state.cartTabStatus = false;
       }
     },
+    toggleReceiptVisibility: (state) => {
+      if (state.items.length < 1) {
+        state.receiptVisibility = false;
+        return;
+      } else {
+        state.receiptVisibility = !state.receiptVisibility;
+      }
+    },
   },
 });
 
@@ -79,6 +88,7 @@ export const {
   decrementQuantity,
   clearCart,
   toggleCartTabStatus,
+  toggleReceiptVisibility,
 } = cartSlice.actions;
 
 export const selectCartItems = (state: RootState) => state.cart.items;
@@ -88,9 +98,6 @@ export const selectCartItemsLength = createSelector(
   (items) =>
     items.reduce((total: number, item: CartItem) => total + item.quantity, 0)
 );
-
-export const selectCartTabStatus = (state: RootState) =>
-  state.cart.cartTabStatus;
 
 export const selectIsItemInCart = (state: RootState, productId: number) =>
   state.cart.items.some((item: CartItem) => item.product_id === productId);
@@ -106,5 +113,11 @@ export const selectCartTotal = createSelector([selectCartItems], (items) =>
     0
   )
 );
+
+export const selectCartTabStatus = (state: RootState) =>
+  state.cart.cartTabStatus;
+
+export const selectReceiptVisibility = (state: RootState) =>
+  state.cart.receiptVisibility;
 
 export default cartSlice.reducer;
