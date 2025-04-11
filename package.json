@@ -10,8 +10,12 @@
     "test": "jest"
   },
   "dependencies": {
+    "@auth/core": "^0.38.0",
     "@reduxjs/toolkit": "^2.6.1",
+    "@types/bcryptjs": "^2.4.6",
+    "bcryptjs": "^3.0.2",
     "next": "15.2.4",
+    "next-auth": "^5.0.0-beta.25",
     "pg": "^8.14.1",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
@@ -27,6 +31,7 @@
     "@types/pg": "^8.11.11",
     "@types/react": "^19",
     "@types/react-dom": "^19",
+    "@types/webpack": "^5.28.5",
     "eslint": "^9",
     "eslint-config-next": "15.2.4",
     "jest": "^29.7.0",

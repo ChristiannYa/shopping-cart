@@ -12,7 +12,12 @@ const ProductList = () => {
         <div>Loading products...</div>
       </div>
     );
-  if (error) return <div>Error loading products: {error}</div>;
+  if (error)
+    return (
+      <div className="mt-32 flex flex-col justify-center items-center">
+        <div>Error loading products: {error}</div>
+      </div>
+    );
 
   return (
     <div className="flex flex-wrap justify-center items-center gap-2">
