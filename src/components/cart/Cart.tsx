@@ -5,6 +5,7 @@ import {
   selectCartItems,
   clearCart,
   selectCartTabStatus,
+  toggleReceiptVisibility,
 } from "@/lib/features/cart/cartSlice";
 import CartItem from "./CartItem";
 import CartTotal from "./CartTotal";
@@ -25,13 +26,13 @@ const Cart = () => {
         <h2 className="text-2xl text-center">Your Cart</h2>
       </div>
 
-      <div className="">
+      <div>
         {cartItems.length === 0 ? (
           <p className="text-center">Your Cart is empty</p>
         ) : (
           <div>
             {cartItems.map((item) => (
-              <CartItem key={item.id} item={item} />
+              <CartItem key={item.product_id} item={item} />
             ))}
             <hr className="my-2 text-white/20" />
             <div className="px-3">
@@ -48,14 +49,23 @@ const Cart = () => {
           </div>
         )}
       </div>
-      <div className="flex w-full">
+      <div className="w-full flex gap-x-2">
         <button
           onClick={handleCartTabStatus}
           className="bg-neutral-900 hover:bg-black hover:cursor-pointer w-full py-2"
         >
           Close
         </button>
-        <button className="bg-blue-500 hover:bg-blue-600 hover:cursor-pointer w-full py-2">
+        <button
+          onClick={() => {
+            if (cartItems.length < 1) {
+              return;
+            }
+            dispatch(toggleReceiptVisibility());
+            handleCartTabStatus();
+          }}
+          className="bg-blue-500 hover:bg-blue-600 hover:cursor-pointer w-full py-2"
+        >
           Checkout
         </button>
       </div>
