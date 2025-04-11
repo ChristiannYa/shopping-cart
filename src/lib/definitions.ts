@@ -12,3 +12,13 @@ export interface CartItem {
   name: string;
   price: number;
 }
+
+export interface DbUser {
+  user_id: number;
+  email: string;
+  email_verified: Date | null;
+  password_hash: string;
+  name: string | null;
+  created_at: Date;
+  updated_at: Date;
+}

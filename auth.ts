@@ -3,17 +3,7 @@ import CredentialsProvider from "next-auth/providers/credentials";
 import { PostgresAdapter } from "@/lib/auth/postgres-adapter";
 import bcrypt from "bcryptjs";
 import pool from "@/lib/db";
-
-// Define the database user type
-interface DbUser {
-  user_id: number;
-  email: string;
-  email_verified: Date | null;
-  password_hash: string;
-  name: string | null;
-  created_at: Date;
-  updated_at: Date;
-}
+import { DbUser } from "@/lib/definitions";
 
 export const { auth, handlers, signIn, signOut } = NextAuth({
   adapter: PostgresAdapter(),
@@ -25,6 +15,7 @@ export const { auth, handlers, signIn, signOut } = NextAuth({
         password: { label: "Password", type: "password" },
       },
       async authorize(credentials) {
+        // Check if credentials are provided
         if (!credentials?.email || !credentials?.password) {
           return null;
         }
@@ -32,18 +23,15 @@ export const { auth, handlers, signIn, signOut } = NextAuth({
           // Find user by email
           const result = await pool.query(
             "SELECT * FROM users WHERE email = $1",
+            // credentials.email replaces the $1 placeholder
             [credentials.email]
           );
           if (result.rowCount === 0) {
             return null;
           }
 
-          // Explicitly type the user from the database
+          // Set the type of user to DbUser
           const user = result.rows[0] as DbUser;
-
-          // ADD THE CONSOLE.LOG STATEMENTS RIGHT HERE
-          console.log("Type:", typeof user.password_hash);
-          console.log("Value:", user.password_hash);
 
           // Check if password_hash exists
           if (!user.password_hash) {
@@ -51,8 +39,7 @@ export const { auth, handlers, signIn, signOut } = NextAuth({
           }
 
           try {
-            // Use a try/catch block around the bcrypt.compare call
-            // Use TypeScript ignore directive to bypass the type checking for this line
+            // Compare the provided password with the stored password hash
             const passwordMatch = await bcrypt.compare(
               credentials.password as string,
               String(user.password_hash)
@@ -70,6 +57,7 @@ export const { auth, handlers, signIn, signOut } = NextAuth({
               emailVerified: user.email_verified,
               image: null,
             };
+            // catch errors during bcrypt comparison
           } catch (bcryptError) {
             console.error("bcrypt error:", bcryptError);
             return null;
@@ -82,21 +70,25 @@ export const { auth, handlers, signIn, signOut } = NextAuth({
     }),
   ],
   session: {
+    // Use JSON Web Tokens for session instead of database sessions.
     strategy: "jwt",
     maxAge: 30 * 24 * 60 * 60, // 30 days
   },
+  // Use custom sign in page
   pages: {
-    signIn: "/login",
+    signIn: "/sign-in",
   },
   callbacks: {
     async jwt({ token, user }) {
       if (user) {
+        // This will only be executed once on sign in
         token.id = user.id;
       }
       return token;
     },
     async session({ session, token }) {
       if (session.user) {
+        // Add id to session
         session.user.id = token.id as string;
       }
       return session;

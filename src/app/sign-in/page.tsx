@@ -1,16 +1,28 @@
 "use client";
 
-import { useState } from "react";
-import { useRouter } from "next/navigation";
-// Import from next-auth/react instead of @/auth
-import { signIn } from "next-auth/react";
+import { useEffect, useState } from "react";
+import { signInAction } from "@/lib/actions/auth";
+import { useRouter, useSearchParams } from "next/navigation";
 
-export default function LoginPage() {
+export default function SignInPage() {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    const errorParam = searchParams.get("error");
+
+    if (errorParam) {
+      if (errorParam === "CredentialSignin") {
+        setError("Invalid email or password. Try again");
+      } else {
+        setError("An error occurred during Sign in. Please try again.");
+      }
+    }
+  }, [searchParams]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -18,22 +30,22 @@ export default function LoginPage() {
     setError("");
 
     try {
-      const result = await signIn("credentials", {
-        email,
-        password,
-        redirect: false,
-      });
+      const result = await signInAction(email, password);
 
       if (result?.error) {
-        setError("Invalid email or password");
-      } else {
-        // Redirect to home page on successful login
-        router.push("/");
-        router.refresh();
+        // Handle specific error cases
+        if (result.error === "CredentialsSignin") {
+          setError("Invalid email or password. Please try again.");
+        } else {
+          setError(`Sign in failed: ${result.error}`);
+        }
+      } else if (result?.url) {
+        // Successful login, redirect
+        router.push(result.url);
       }
     } catch (err) {
-      console.error("Login error:", err);
-      setError("An error occurred during login");
+      console.error("Sign in error:", err);
+      setError("An unexpected error occurred during sign in");
     } finally {
       setLoading(false);
     }
@@ -48,7 +60,7 @@ export default function LoginPage() {
           </h2>
         </div>
         {error && (
-          <div className="bg-red-500/20 text-red-300 p-3 rounded-md text-center">
+          <div className="bg-red-500/30 text-red-300 p-3 rounded-md text-center">
             {error}
           </div>
         )}

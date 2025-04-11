@@ -64,11 +64,7 @@ export const cartSlice = createSlice({
       state.items = [];
     },
     toggleCartTabStatus: (state) => {
-      if (state.cartTabStatus === false) {
-        state.cartTabStatus = true;
-      } else {
-        state.cartTabStatus = false;
-      }
+      state.cartTabStatus = !state.cartTabStatus;
     },
     toggleReceiptVisibility: (state) => {
       if (state.items.length < 1) {

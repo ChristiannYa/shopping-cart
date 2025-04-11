@@ -2,12 +2,14 @@
 
 import { useAppSelector, useCartTab } from "@/lib/hooks";
 import { selectCartItemsLength } from "@/lib/features/cart/cartSlice";
-import UserMenu from "@/app/ui/UserMenu"; // Update the import path if needed
+import UserMenu from "@/app/ui/UserMenu";
 import Image from "next/image";
 
 const HomeHeader = () => {
   const { handleCartTabStatus } = useCartTab();
   const cartItemslength = useAppSelector(selectCartItemsLength);
+
+  // console.log("HomeHeader component rendered");
 
   return (
     <header

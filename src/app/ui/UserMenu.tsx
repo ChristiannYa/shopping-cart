@@ -1,7 +1,8 @@
 "use client";
 
 import { useState, useRef, useEffect } from "react";
-import { useSession, signOut } from "next-auth/react";
+import { useSession } from "next-auth/react";
+import { signOutAction } from "../../lib/actions/auth";
 import UserAvatar from "./UserAvatar";
 
 const UserMenu = () => {
@@ -23,10 +24,6 @@ const UserMenu = () => {
     };
   }, []);
 
-  const handleLogout = async () => {
-    await signOut({ callbackUrl: "/" });
-  };
-
   return (
     <div className="relative" ref={menuRef}>
       <button onClick={() => setIsOpen(!isOpen)} className="focus:outline-none">
@@ -34,23 +31,25 @@ const UserMenu = () => {
       </button>
 
       {isOpen && (
-        <div className="absolute right-0 mt-2 w-48 bg-neutral-800 rounded-sm shadow-lg py-1 px-2 z-10">
+        <div className="absolute right-0 mt-4 w-48 bg-neutral-800 rounded-sm shadow-lg p-2 z-10">
           {session ? (
             <>
               <div className="text-sm text-blue-500 font-semibold ml-1">
                 {session.user?.name || session.user?.email}
               </div>
               <button
-                onClick={handleLogout}
-                className="block w-full text-left p-1 text-sm text-white hover:underline"
+                onClick={() => signOutAction()}
+                className="text-left text-sm text-white hover:underline hover:cursor-pointer block w-full ml-1"
               >
                 Sign out
               </button>
             </>
           ) : (
+            // Ensure clean page state when navigating to the sign in
+            // page, hence the a tag instead of Link
             <a
-              href="/login"
-              className="block p-1 text-sm text-white hover:underline"
+              href="/sign-in"
+              className=" text-white text-sm hover:underline hover:cursor-pointer p-1"
             >
               Sign in
             </a>
