@@ -13,10 +13,15 @@ export interface CartItem {
   price: number;
 }
 
-export interface ProductRow {
-  product_id: number;
+export interface User {
+  user_id: number;
+  email: string;
   name: string;
-  price: number | number;
-  in_stock: boolean;
-  quantity: number;
+  email_verified: boolean;
+  created_at: string;
+}
+
+export interface LoginResponse {
+  user: User;
+  token: string;
 }

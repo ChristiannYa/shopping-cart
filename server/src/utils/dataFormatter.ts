@@ -1,4 +1,4 @@
-import { Product, ProductRow } from "../../../src/lib/definitions";
+import { Product, ProductRow } from "../lib/definitions";
 
 export const formatProduct = (product: ProductRow): Product => {
   return {
