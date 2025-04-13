@@ -1,71 +1,63 @@
-import { useState, useEffect } from "react";
-import { User } from "@/lib/definitions";
-import { authService } from "@/lib/services/authService";
+import { useEffect } from "react";
 import { useRouter } from "next/navigation";
+import { useAppDispatch, useAppSelector } from "@/lib/hooks";
+import {
+  selectUser,
+  selectAuthLoading,
+  selectAuthError,
+  selectIsAuthenticated,
+  fetchCurrentUser,
+  loginUser,
+  logoutUser,
+  clearError,
+} from "@/lib/features/auth/authSlice";
 
 export const useAuth = () => {
-  const [user, setUser] = useState<User | null>(null);
-  const [loading, setLoading] = useState<boolean>(true);
-  const [error, setError] = useState<string | null>(null);
-  const [shouldFetchUser, setShouldFetchUser] = useState<boolean>(true);
+  const user = useAppSelector(selectUser);
+  const loading = useAppSelector(selectAuthLoading);
+  const error = useAppSelector(selectAuthError);
+  const isAuthenticated = useAppSelector(selectIsAuthenticated);
+  const dispatch = useAppDispatch();
   const router = useRouter();
 
   useEffect(() => {
-    const fetchUser = async () => {
-      if (!shouldFetchUser) {
-        setLoading(false);
-        return;
-      }
-
-      try {
-        const userData = await authService.getCurrentUser();
-        setUser(userData);
-      } catch (err) {
-        console.error("Not authenticated", err);
-        setUser(null);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchUser();
-  }, [shouldFetchUser]);
+    // Fetch the current user when the hook is first used
+    dispatch(fetchCurrentUser());
+  }, [dispatch]);
 
   const login = async (email: string, password: string) => {
-    setLoading(true);
-    setError(null);
-
     try {
-      const response = await authService.login(email, password);
-
-      setUser(response.user);
-      setShouldFetchUser(true);
-      setLoading(false);
-      return true;
-    } catch (err) {
-      if (err instanceof Error) {
-        setError(err.message || "Failed to login");
-        setLoading(false);
-      } else {
-        setError("An unknown error occurred");
-        setLoading(false);
+      const resultAction = await dispatch(loginUser({ email, password }));
+      if (loginUser.fulfilled.match(resultAction)) {
+        return true;
       }
+      return false;
+    } catch (err) {
+      console.error("Login error:", err);
       return false;
     }
   };
 
   const logout = async () => {
     try {
-      setShouldFetchUser(false);
-
-      await authService.logout();
-      setUser(null);
+      await dispatch(logoutUser());
       router.push("/login");
     } catch (err) {
-      console.error("Logout error", err);
-      setError("Failed to logout");
+      console.error("Logout error:", err);
     }
   };
 
-  return { user, loading, error, login, logout };
+  const clearAuthError = () => {
+    dispatch(clearError());
+  };
+
+  return {
+    user,
+    loading,
+    error,
+    isAuthenticated,
+    login,
+    logout,
+    clearAuthError,
+  };
 };

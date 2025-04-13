@@ -1,16 +1,17 @@
 "use client";
 
 import { useState } from "react";
-import { useAuth } from "@/lib/hooks/auth/useAuth";
+import { useAppDispatch } from "@/lib/hooks";
+import { logoutUser } from "@/lib/features/auth/authSlice";
 
 const LogoutButton = () => {
   const [loading, setLoading] = useState(false);
-  const { logout } = useAuth();
+  const dispatch = useAppDispatch();
 
   const handleLogout = async () => {
     setLoading(true);
     try {
-      await logout();
+      await dispatch(logoutUser());
     } catch (error) {
       console.error("Logout failed:", error);
     } finally {

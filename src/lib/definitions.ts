@@ -25,3 +25,9 @@ export interface LoginResponse {
   user: User;
   token: string;
 }
+
+export interface AuthState {
+  user: User | null;
+  loading: boolean;
+  error: string | null;
+}

@@ -2,11 +2,12 @@
 
 import ProtectedRoute from "@/components/auth/ProtectedRoute";
 import { formatDate } from "@/lib/utils/formatDate";
-import { useAuth } from "@/lib/hooks/auth/useAuth";
+import { useAppSelector } from "@/lib/hooks";
+import { selectUser } from "@/lib/features/auth/authSlice";
 import LogoutButton from "@/components/profile/LogoutButton";
 
 function ProfileContent() {
-  const { user } = useAuth();
+  const user = useAppSelector(selectUser);
 
   return (
     <div className="p-4">

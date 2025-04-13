@@ -1,33 +1,43 @@
 "use client";
 
-import Login from "@/components/auth/Login";
-import { useAuth } from "@/lib/hooks/auth/useAuth";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { useEffect } from "react";
+import { useAppSelector } from "@/lib/hooks";
+import { selectUser, selectAuthLoading } from "@/lib/features/auth/authSlice";
+import Login from "@/components/auth/Login";
 
-const LoginPage = () => {
-  const { user, loading } = useAuth();
+export default function LoginPage() {
+  const user = useAppSelector(selectUser);
+  const loading = useAppSelector(selectAuthLoading);
   const router = useRouter();
+  const [mounted, setMounted] = useState(false);
 
+  // Set mounted to true after component mounts
   useEffect(() => {
-    if (!loading && user) {
+    setMounted(true);
+  }, []);
+
+  // Redirect authenticated users
+  useEffect(() => {
+    if (mounted && user) {
       router.push("/");
     }
-  }, [user, loading, router]);
+  }, [user, router, mounted]);
 
-  if (loading) {
-    return (
-      <div className="w-screen h-screen flex flex-col justify-center items-center">
-        Loading...
-      </div>
-    );
+  // Show a simple loading state until client-side rendering takes over
+  if (!mounted) {
+    return null; // Return nothing during SSR to avoid hydration issues
   }
 
   return (
     <div className="container mx-auto px-4">
-      <Login />
+      {loading ? (
+        <div className="w-screen h-screen flex flex-col justify-center items-center">
+          Loading...
+        </div>
+      ) : (
+        <Login />
+      )}
     </div>
   );
-};
-
-export default LoginPage;
+}

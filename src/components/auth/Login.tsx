@@ -2,29 +2,30 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { useAuth } from "@/lib/hooks/auth/useAuth";
+import { useAppDispatch, useAppSelector } from "@/lib/hooks";
+import { loginUser, selectAuthError } from "@/lib/features/auth/authSlice";
 
 const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [loading, setLoading] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const router = useRouter();
-  const { login, error: authError } = useAuth();
+  const dispatch = useAppDispatch();
+  const authError = useAppSelector(selectAuthError);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setLoading(true);
+    setIsSubmitting(true);
 
     try {
-      const success = await login(email, password);
-      if (success) {
-        // Redirect to home page or dashboard
+      const resultAction = await dispatch(loginUser({ email, password }));
+      if (loginUser.fulfilled.match(resultAction)) {
         router.push("/");
       }
     } catch (err) {
       console.error("Login submission error:", err);
     } finally {
-      setLoading(false);
+      setIsSubmitting(false);
     }
   };
 
@@ -80,10 +81,10 @@ const Login = () => {
           <div>
             <button
               type="submit"
-              disabled={loading}
+              disabled={isSubmitting}
               className="group relative flex w-full justify-center rounded-md bg-blue-500 px-3 py-2 text-sm font-semibold text-white hover:bg-blue-400 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-500 disabled:bg-blue-300"
             >
-              {loading ? "Signing in..." : "Sign in"}
+              {isSubmitting ? "Signing in..." : "Sign in"}
             </button>
           </div>
         </form>
