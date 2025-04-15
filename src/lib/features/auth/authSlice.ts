@@ -1,7 +1,8 @@
+import { RootState } from "../../store";
 import { createSlice, createAsyncThunk, PayloadAction } from "@reduxjs/toolkit";
 import { User, AuthState } from "@/lib/definitions";
 import { authService } from "@/lib/services/authService";
-import { RootState } from "../../store";
+import { storage } from "@/lib/utils/storage";
 
 const initialState: AuthState = {
   user: null,
@@ -29,15 +30,13 @@ export const loginUser = createAsyncThunk(
     { email, password }: { email: string; password: string },
     { rejectWithValue }
   ) => {
-    try {
-      const response = await authService.login(email, password);
-      return response.user;
-    } catch (error) {
-      if (error instanceof Error) {
-        return rejectWithValue(error.message || "Failed to login");
-      }
-      return rejectWithValue("An unknown error occurred");
+    const response = await authService.login(email, password);
+
+    if ("error" in response && response.error) {
+      return rejectWithValue(response.error);
     }
+
+    return response.user;
   }
 );
 
@@ -89,10 +88,15 @@ const authSlice = createSlice({
         state.loading = true;
         state.error = null;
       })
-      .addCase(loginUser.fulfilled, (state, action: PayloadAction<User>) => {
-        state.user = action.payload;
-        state.loading = false;
-      })
+      .addCase(
+        loginUser.fulfilled,
+        (state, action: PayloadAction<User | null>) => {
+          state.user = action.payload;
+          state.loading = false;
+
+          storage.setFlag("loggedIn", true);
+        }
+      )
       .addCase(loginUser.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload as string;
@@ -106,6 +110,8 @@ const authSlice = createSlice({
       .addCase(logoutUser.fulfilled, (state) => {
         state.user = null;
         state.loading = false;
+
+        storage.remove("loggedIn");
       })
       .addCase(logoutUser.rejected, (state, action) => {
         state.loading = false;

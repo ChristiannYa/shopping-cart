@@ -1,6 +1,7 @@
 import { Response } from "express";
 import pool from "../config/db";
 import { AuthRequest } from "../middlewares/auth";
+import { selectUserByIdQuery } from "../repositories/usersRepository";
 
 export const getCurrentUser = async (req: AuthRequest, res: Response) => {
   try {
@@ -12,10 +13,7 @@ export const getCurrentUser = async (req: AuthRequest, res: Response) => {
     }
 
     // Fetch complete user data from database
-    const result = await pool.query(
-      "SELECT user_id, email, name, email_verified, created_at FROM users WHERE user_id = $1",
-      [userId]
-    );
+    const result = await pool.query(selectUserByIdQuery, [userId]);
 
     if (result.rows.length === 0) {
       return res.status(404).json({ message: "User not found" });

@@ -22,8 +22,9 @@ export interface User {
 }
 
 export interface LoginResponse {
-  user: User;
-  token: string;
+  user: User | null;
+  token?: string;
+  error?: string;
 }
 
 export interface AuthState {

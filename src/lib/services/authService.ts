@@ -11,7 +11,17 @@ export const authService = {
    * the user object and authenticatin token
    */
   async login(email: string, password: string): Promise<LoginResponse> {
-    return authClient.post("/auth/login", { email, password });
+    const response = await authClient.post("/auth/login", { email, password });
+
+    // Check if the response contains an error
+    if (response.error) {
+      return {
+        error: "Login failed",
+        user: null,
+      };
+    }
+
+    return response;
   },
 
   /**
@@ -28,7 +38,6 @@ export const authService = {
 
   /**
    * Logs out the current user by clearing the authentication cookie
-   * and removing user data from local storage
    *
    * @returns A Promise that resolves to an object containing a success message
    * @remarks This method makes a POST request to the logout endpoint which
@@ -36,7 +45,6 @@ export const authService = {
    */
   async logout(): Promise<{ message: string }> {
     const response = await authClient.post("/auth/logout", {});
-    localStorage.removeItem("user");
     return response;
   },
 };

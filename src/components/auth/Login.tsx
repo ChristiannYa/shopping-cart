@@ -17,20 +17,17 @@ const Login = () => {
     e.preventDefault();
     setIsSubmitting(true);
 
-    try {
-      const resultAction = await dispatch(loginUser({ email, password }));
-      if (loginUser.fulfilled.match(resultAction)) {
-        router.push("/");
-      }
-    } catch (err) {
-      console.error("Login submission error:", err);
-    } finally {
-      setIsSubmitting(false);
+    const resultAction = await dispatch(loginUser({ email, password }));
+
+    if (loginUser.fulfilled.match(resultAction)) {
+      router.push("/");
     }
+
+    setIsSubmitting(false);
   };
 
   return (
-    <div className="flex min-h-screen flex-col items-center justify-center">
+    <div className="flex flex-col items-center justify-center">
       <div className="w-full max-w-md space-y-8 p-6 bg-white/5 rounded-lg">
         <div>
           <h2 className="mt-6 text-center text-3xl font-bold">

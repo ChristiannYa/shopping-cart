@@ -51,9 +51,14 @@ export const authClient = {
     });
 
     if (!response.ok) {
-      throw new Error(`API error: ${response.statusText}`);
+      return {
+        error: true,
+        status: response.status,
+        message: `API error: ${response.statusText}`,
+      };
     }
 
-    return response.json();
+    const responseData = await response.json();
+    return responseData;
   },
 };

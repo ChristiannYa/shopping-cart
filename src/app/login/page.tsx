@@ -5,39 +5,37 @@ import { useRouter } from "next/navigation";
 import { useAppSelector } from "@/lib/hooks";
 import { selectUser, selectAuthLoading } from "@/lib/features/auth/authSlice";
 import Login from "@/components/auth/Login";
+import GoHomeButton from "@/components/navigation/GoHomeButton";
 
 export default function LoginPage() {
   const user = useAppSelector(selectUser);
   const loading = useAppSelector(selectAuthLoading);
   const router = useRouter();
-  const [mounted, setMounted] = useState(false);
+  const [isCheckingAuth, setIsCheckingAuth] = useState(true);
 
-  // Set mounted to true after component mounts
   useEffect(() => {
-    setMounted(true);
-  }, []);
+    const timer = setTimeout(() => {
+      setIsCheckingAuth(false);
+      if (user) {
+        router.push("/");
+      }
+    }, 1000);
+    return () => clearTimeout(timer);
+  }, [user, router]);
 
-  // Redirect authenticated users
-  useEffect(() => {
-    if (mounted && user) {
-      router.push("/");
-    }
-  }, [user, router, mounted]);
-
-  // Show a simple loading state until client-side rendering takes over
-  if (!mounted) {
-    return null; // Return nothing during SSR to avoid hydration issues
+  if (isCheckingAuth || loading) {
+    return (
+      <div className="pt-28 flex flex-col justify-center items-center space-y-5">
+        <div>Loading...</div>
+        <span className="w-6 h-6 border-2 border-gray-500 border-t-white rounded-full animate-spin"></span>
+      </div>
+    );
   }
 
   return (
-    <div className="container mx-auto px-4">
-      {loading ? (
-        <div className="w-screen h-screen flex flex-col justify-center items-center">
-          Loading...
-        </div>
-      ) : (
-        <Login />
-      )}
+    <div className="flex flex-col justify-center items-center min-h-[calc(100vh-70px)] mx-auto px-4 space-y-8">
+      <Login />
+      <GoHomeButton />
     </div>
   );
 }
