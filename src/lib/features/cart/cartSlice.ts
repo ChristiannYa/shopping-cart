@@ -5,7 +5,6 @@ import { CartItem } from "@/lib/definitions";
 const initialState = {
   items: [] as CartItem[],
   cartTabStatus: false,
-  receiptVisibility: false,
 };
 
 const findCartItem = (items: CartItem[], id: number) =>
@@ -60,14 +59,6 @@ export const cartSlice = createSlice({
     toggleCartTabStatus: (state) => {
       state.cartTabStatus = !state.cartTabStatus;
     },
-    toggleReceiptVisibility: (state) => {
-      if (state.items.length < 1) {
-        state.receiptVisibility = false;
-        return;
-      } else {
-        state.receiptVisibility = !state.receiptVisibility;
-      }
-    },
   },
 });
 
@@ -78,7 +69,6 @@ export const {
   decrementQuantity,
   clearCart,
   toggleCartTabStatus,
-  toggleReceiptVisibility,
 } = cartSlice.actions;
 
 export const selectCartItems = (state: RootState) => state.cart.items;
@@ -106,8 +96,5 @@ export const selectCartTotal = createSelector([selectCartItems], (items) =>
 
 export const selectCartTabStatus = (state: RootState) =>
   state.cart.cartTabStatus;
-
-export const selectReceiptVisibility = (state: RootState) =>
-  state.cart.receiptVisibility;
 
 export default cartSlice.reducer;
