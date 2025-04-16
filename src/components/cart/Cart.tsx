@@ -18,7 +18,7 @@ const Cart = () => {
 
   return (
     <div
-      className={`bg-gray-700 transform transition-transform duration-500 w-80 md:w-96 h-full p-2 grid grid-rows-[60px_1fr_60px] fixed top-0 right-0 ${
+      className={`bg-gray-700 transform transition-transform duration-500 w-80 md:w-96 h-full p-2 grid grid-rows-[60px_1fr_60px] fixed top-0 right-0 z-10 ${
         statusTab === false ? "translate-x-full" : ""
       }`}
     >

@@ -1,12 +1,6 @@
 import type { RootState } from "../../store";
 import { createSelector, createSlice, PayloadAction } from "@reduxjs/toolkit";
-
-interface CartItem {
-  product_id: number;
-  quantity: number;
-  name: string;
-  price: number;
-}
+import { CartItem } from "@/lib/definitions";
 
 const initialState = {
   items: [] as CartItem[],

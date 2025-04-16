@@ -1,15 +1,16 @@
 "use client";
 
-import { useProducts } from "@/lib/hooks";
 import ProductItem from "./ProductItem";
+import { useProducts } from "@/lib/hooks/products/useProducts";
 
 const ProductList = () => {
   const { products, loading, error } = useProducts();
 
   if (loading)
     return (
-      <div className="mt-32 flex flex-col justify-center items-center">
+      <div className="mt-20 space-y-5 flex flex-col justify-center items-center">
         <div>Loading products...</div>
+        <span className="w-6 h-6 border-2 border-gray-500 border-t-white rounded-full animate-spin"></span>
       </div>
     );
   if (error)
