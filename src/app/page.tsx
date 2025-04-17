@@ -24,11 +24,11 @@ export default function Home() {
           <HomeHeader />
           <hr className="text-white/20 mb-8" />
           <ProductList />
+          <div className="mt-8 flex justify-end">
+            <AuthCorner />
+          </div>
         </div>
         <Cart />
-        <div className="mt-8 flex justify-end">
-          <AuthCorner />
-        </div>
       </div>
     </>
   );

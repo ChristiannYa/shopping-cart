@@ -5,14 +5,13 @@ import { selectUserByIdQuery } from "../repositories/usersRepository";
 
 export const getCurrentUser = async (req: AuthRequest, res: Response) => {
   try {
-    // The user_id comes from the authenticated request
+    // user_id comes from the authenticated request
     const userId = req.user?.user_id;
 
     if (!userId) {
       return res.status(401).json({ message: "Not authenticated" });
     }
 
-    // Fetch complete user data from database
     const result = await pool.query(selectUserByIdQuery, [userId]);
 
     if (result.rows.length === 0) {

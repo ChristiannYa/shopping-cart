@@ -2,8 +2,9 @@ import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import pool from "../config/db";
 import { User, JwtPayload } from "../lib/definitions";
+import { selectUserByEmailQuery } from "../repositories/usersRepository";
 
-const JWT_SECRET = process.env.JWT_SECRET || "your-secret-key";
+const JWT_SECRET = process.env.JWT_SECRET || "secret-key";
 
 export const authService = {
   async login(
@@ -11,20 +12,13 @@ export const authService = {
     password: string
   ): Promise<{ user: User; token: string } | null> {
     try {
-      // Query the user from database
-      // In your server-side auth route
-      const result = await pool.query(
-        "SELECT user_id, email, name, email_verified, password_hash, created_at FROM users WHERE email = $1",
-        [email]
-      );
-
+      const result = await pool.query(selectUserByEmailQuery, [email]);
       const user = result.rows[0];
 
       if (!user) {
         return null;
       }
 
-      // Compare password with stored hash
       const isPasswordValid = await bcrypt.compare(
         password,
         user.password_hash
@@ -34,7 +28,7 @@ export const authService = {
         return null;
       }
 
-      // Create JWT token
+      // Do not provide sensitive information in the token
       const token = jwt.sign(
         {
           userId: user.user_id,

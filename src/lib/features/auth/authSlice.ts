@@ -93,8 +93,7 @@ const authSlice = createSlice({
         (state, action: PayloadAction<User | null>) => {
           state.user = action.payload;
           state.loading = false;
-
-          storage.setFlag("loggedIn", true);
+          storage.setFlag("isLoggedIn", true);
         }
       )
       .addCase(loginUser.rejected, (state, action) => {
@@ -110,8 +109,7 @@ const authSlice = createSlice({
       .addCase(logoutUser.fulfilled, (state) => {
         state.user = null;
         state.loading = false;
-
-        storage.remove("loggedIn");
+        storage.remove("isLoggedIn");
       })
       .addCase(logoutUser.rejected, (state, action) => {
         state.loading = false;
